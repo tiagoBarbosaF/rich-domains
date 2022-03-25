@@ -12,18 +12,19 @@ public class Subscription : Entity
         LastUpdateDate = DateTime.Now;
         ExpireDate = expireDate;
         Active = true;
-        Payments = new List<Payment>();
+        _payments = new List<Payment>();
     }
     
     public DateTime CreateDate { get; private set; }
     public DateTime LastUpdateDate { get; private set; }
     public DateTime? ExpireDate { get; private set; }
     public bool Active { get; private set; }
-    public IReadOnlyCollection<Payment> Payments { get; private set; }
+
+    public IReadOnlyCollection<Payment> Payments => _payments.ToArray();
 
     public void AddPayment(Payment payment)
     {
-        AddNotifications(new Contract<Subscription>()
+        AddNotifications(new Contract<Payment>()
             .Requires()
             .IsGreaterThan(DateTime.Now, payment.PaidDate, "Subscription.Payments", "Date does to have being in future"));
         _payments.Add(payment);
